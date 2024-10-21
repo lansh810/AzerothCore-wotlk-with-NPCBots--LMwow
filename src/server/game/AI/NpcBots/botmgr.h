@@ -159,6 +159,8 @@ class AC_GAME_API BotMgr
         static uint8 GetOwnershipExpireMode();
         static uint32 GetDesiredWanderingBotsCount();
         static uint32 GetBGTargetTeamPlayersCount(BattlegroundTypeId bgTypeId);
+        static uint32 GetNpcBotHireItemId();
+        static uint32 GetNpcBotHireItemCount();
         static float GetBotHKHonorRate();
         static float GetBotStatLimitDodge();
         static float GetBotStatLimitParry();
@@ -247,6 +249,7 @@ class AC_GAME_API BotMgr
         bool IsBeingResurrected(WorldObject const* corpse) const;
 
         static uint32 GetNpcBotCost(uint8 level, uint8 botclass);
+        static uint32 GetNpcBotItemCount(uint8 level, uint8 botclass);
         static std::string GetNpcBotCostStr(uint8 level, uint8 botclass);
         static uint8 BotClassByClassName(std::string const& className);
         static uint8 GetBotPlayerClass(uint8 bot_class);

@@ -78,6 +78,8 @@ uint32 _targetBGPlayersPerTeamCount_AB;
 uint32 _targetBGPlayersPerTeamCount_EY;
 uint32 _targetBGPlayersPerTeamCount_SA;
 uint32 _targetBGPlayersPerTeamCount_IC;
+uint32 _npcbothireitemid;
+uint32 _npcbothireitemcount;
 bool _enableNpcBots;
 bool _logToDB;
 bool _enableNpcBotsDungeons;
@@ -446,6 +448,8 @@ void BotMgr::LoadConfig(bool reload)
     _bothk_message_enable           = sConfigMgr->GetBoolDefault("NpcBot.HK.Message.Enable", false);
     _bothk_achievements_enable      = sConfigMgr->GetBoolDefault("NpcBot.HK.Achievements.Enable", false);
     _bothk_rate_honor               = sConfigMgr->GetFloatDefault("NpcBot.HK.Rate.Honor", 1.0);
+    _npcbothireitemid               = sConfigMgr->GetIntDefault("NpcBot.HireItemID", 0);
+    _npcbothireitemcount            = sConfigMgr->GetIntDefault("NpcBot.HireItemCount", 1);
 
     if (reload)
         BotLogger::Log(NPCBOT_LOG_CONFIG_RELOAD, uint32(0));
@@ -989,6 +993,14 @@ uint32 BotMgr::GetBGTargetTeamPlayersCount(BattlegroundTypeId bgTypeId)
         default:
             return 0;
     }
+}
+uint32 BotMgr::GetNpcBotHireItemId()
+{
+    return _npcbothireitemid;
+}
+uint32 BotMgr::GetNpcBotHireItemCount()
+{
+    return _npcbothireitemcount;
 }
 float BotMgr::GetBotHKHonorRate()
 {
@@ -1985,6 +1997,48 @@ uint32 BotMgr::GetNpcBotCost(uint8 level, uint8 botclass)
     }
 
     return cost;
+}
+
+//调整NPCBOT 购买价格
+uint32 BotMgr::GetNpcBotItemCount(uint8 level, uint8 botclass)
+{
+    if (level < 10)
+        _npcbothireitemcount = 1;
+    else if (level < 20)
+        _npcbothireitemcount = 5;
+    else if (level < 30)
+        _npcbothireitemcount = 10;
+    else if (level < 40)
+        _npcbothireitemcount = 15;
+    else if (level < 50)
+        _npcbothireitemcount = 20;
+    else if (level < 60)
+        _npcbothireitemcount = 25;
+    else if (level < 70)
+        _npcbothireitemcount = 35;
+    else
+        _npcbothireitemcount = 40;
+
+    switch (botclass)
+    {
+    case BOT_CLASS_BM:
+    case BOT_CLASS_ARCHMAGE:
+    case BOT_CLASS_SPELLBREAKER:
+    case BOT_CLASS_NECROMANCER:
+        _npcbothireitemcount *= 1.5;
+        break;
+    case BOT_CLASS_SPHYNX:
+    case BOT_CLASS_DREADLORD:
+    case BOT_CLASS_DARK_RANGER:
+    case BOT_CLASS_SEA_WITCH:
+    case BOT_CLASS_CRYPT_LORD:
+        _npcbothireitemcount *= 3;
+        break;
+    default:
+        break;
+    }
+
+    return _npcbothireitemcount;
 }
 
 std::string BotMgr::GetNpcBotCostStr(uint8 level, uint8 botclass)

@@ -157,8 +157,16 @@ public:
                         if (!textId)
                             continue;
 
+                        uint32 itemId = BotMgr::GetNpcBotHireItemId();
+                        uint32 itemCount = BotMgr::GetNpcBotItemCount(player->GetLevel(), botclass);
                         std::ostringstream bclass;
-                        bclass << npcbot_count_per_class[botclass] << " " << bot_ai::LocalizedNpcText(player, textId) << " (" << BotMgr::GetNpcBotCostStr(player->GetLevel(), botclass) << ")";
+                        const ItemTemplate* itemTemplate = sObjectMgr->GetItemTemplate(itemId);
+                        std::string name = itemTemplate->Name1;
+                        bclass << npcbot_count_per_class[botclass] << " "
+                            << bot_ai::LocalizedNpcText(player, textId) << "---"
+                            << " (" << BotMgr::GetNpcBotCostStr(player->GetLevel(), botclass) << "--"
+                            << "|c" << std::hex << ItemQualityColors[itemTemplate->Quality] << std::dec <<
+                            "|Hitem:" << itemTemplate << ":0:0:0:0:0:0:0:0:0|h" << name << "|h|r" << " x " << itemCount << ")";
 
                         AddGossipItemFor(player, GOSSIP_ICON_TALK, bclass.str(), HIRE_CLASS, GOSSIP_ACTION_INFO_DEF + botclass);
 
@@ -180,6 +188,10 @@ public:
                     uint8 botclass = action - GOSSIP_ACTION_INFO_DEF;
 
                     uint32 cost = BotMgr::GetNpcBotCost(player->GetLevel(), botclass);
+                    uint32 itemId = BotMgr::GetNpcBotHireItemId();
+                    uint32 itemCount = BotMgr::GetNpcBotItemCount(player->GetLevel(), botclass);
+                    const ItemTemplate* itemTemplate = sObjectMgr->GetItemTemplate(itemId);
+                    std::string name = itemTemplate->Name1;
                     if (!player->HasEnoughMoney(cost))
                     {
                         WhisperTo(player, me, bot_ai::LocalizedNpcText(player, BOT_TEXT_HIREFAIL_COST).c_str());
@@ -204,7 +216,8 @@ public:
                             continue;
 
                         std::ostringstream message1;
-                        message1 << bot_ai::LocalizedNpcText(player, BOT_TEXT_BOTGIVER_WISH_TO_HIRE_) << bot->GetName() << '?';
+                        message1 << bot_ai::LocalizedNpcText(player, BOT_TEXT_BOTGIVER_WISH_TO_HIRE_) << bot->GetName() << '?' << '\n' << '\n' << "|c" << std::hex << ItemQualityColors[itemTemplate->Quality] << std::dec <<
+                            "|Hitem:" << itemTemplate << ":0:0:0:0:0:0:0:0:0|h" << name << "|h|r" << " x " << itemCount;
 
                         std::ostringstream info_ostr;
                         uint32 raceTextId;
@@ -243,6 +256,9 @@ public:
                 }
                 case HIRE_ENTRY:
                 {
+                    uint8 botclass = action - GOSSIP_ACTION_INFO_DEF;
+                    uint32 itemId = BotMgr::GetNpcBotHireItemId();
+                    uint32 itemCount = BotMgr::GetNpcBotItemCount(player->GetLevel(), botclass);
                     uint32 entry = action - GOSSIP_ACTION_INFO_DEF;
                     Creature const* bot = BotDataMgr::FindBot(entry);
                     if (!bot)
@@ -266,6 +282,7 @@ public:
                     //laways returns true
                     bot->GetBotAI()->OnGossipSelect(player, me, GOSSIP_SENDER_HIRE, GOSSIP_ACTION_INFO_DEF);
 
+                    player->DestroyItemCount(itemId, itemCount, true);
                     if (player->HaveBot() && player->GetBotMgr()->GetBot(bot->GetGUID()))
                         WhisperTo(player, me, bot_ai::LocalizedNpcText(player, BOT_TEXT_BOTGIVER_HIRESUCCESS).c_str());
 

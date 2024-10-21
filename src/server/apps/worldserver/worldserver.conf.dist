@@ -4683,6 +4683,8 @@ NpcBot.HideSpawns = 1
 #        Default:     1000000 (100 gold)
 
 NpcBot.Cost = 1000000
+NpcBot.HireItemID = 0
+NpcBot.HireItemCount = 1
 
 #
 #    NpcBot.UpdateDelay.Base

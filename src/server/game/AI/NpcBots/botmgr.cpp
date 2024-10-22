@@ -2009,6 +2009,8 @@ bool BotMgr::RemoveAllBotsFromGroup()
     return true;
 }
 
+
+//调整NPCBOT 购买价格
 uint32 BotMgr::GetNpcBotCost(uint8 level, uint8 botclass)
 {
     //assuming default 1000000
@@ -2019,7 +2021,7 @@ uint32 BotMgr::GetNpcBotCost(uint8 level, uint8 botclass)
     //40 : 500000   //50 gold
     //rest is linear
     //rare / rareelite bots have their cost adjusted
-    static const uint32 cost[] = { 5, 5, 10, 15, 20, 25, 30, 35, 40 };
+    static const uint32 cost[] = { 1, 10, 20, 30, 40, 50, 60, 70, 80 };
     _npcBotsCost = cost[std::min<uint32>(level / 10, 8)];
 
     switch (botclass)
@@ -2028,14 +2030,14 @@ uint32 BotMgr::GetNpcBotCost(uint8 level, uint8 botclass)
     case BOT_CLASS_ARCHMAGE:
     case BOT_CLASS_SPELLBREAKER:
     case BOT_CLASS_NECROMANCER:
-        _npcBotsCost *= 1.5;
+        _npcBotsCost *= 10;  //1.5
         break;
     case BOT_CLASS_SPHYNX:
     case BOT_CLASS_DREADLORD:
     case BOT_CLASS_DARK_RANGER:
     case BOT_CLASS_SEA_WITCH:
     case BOT_CLASS_CRYPT_LORD:
-        _npcBotsCost *= 2.9;
+        _npcBotsCost *= 20;    //2.8
         break;
     default:
         break;
@@ -2044,7 +2046,7 @@ uint32 BotMgr::GetNpcBotCost(uint8 level, uint8 botclass)
     return _npcBotsCost * 10000;
 }
 
-//调整NPCBOT 购买价格
+//新增NPCBOT 购买消耗的龙魂
 uint32 BotMgr::GetNpcBotItemCount(uint8 level, uint8 botclass)
 {
 

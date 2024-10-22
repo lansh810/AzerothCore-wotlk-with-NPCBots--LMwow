@@ -1970,55 +1970,37 @@ uint32 BotMgr::GetNpcBotCost(uint8 level, uint8 botclass)
     //40 : 500000   //50 gold
     //rest is linear
     //rare / rareelite bots have their cost adjusted
-    uint32 cost =
-        level < 10 ? _npcBotsCost / 2000 : //5 silver
-        level < 20 ? _npcBotsCost / 100 :  //1 gold
-        level < 30 ? _npcBotsCost / 20 :   //5 gold
-        level < 40 ? _npcBotsCost / 5 :    //20 gold
-        (_npcBotsCost * (level - (level % 10))) / DEFAULT_MAX_LEVEL; //50 - 100 gold
+    static const uint32 cost[] = { 5, 5, 10, 15, 20, 25, 30, 35, 40 };
+    _npcBotsCost = cost[std::min<uint32>(level / 10, 8)];
 
     switch (botclass)
     {
-        case BOT_CLASS_BM:
-        case BOT_CLASS_ARCHMAGE:
-        case BOT_CLASS_SPELLBREAKER:
-        case BOT_CLASS_NECROMANCER:
-            cost += cost; //200%
-            break;
-        case BOT_CLASS_SPHYNX:
-        case BOT_CLASS_DREADLORD:
-        case BOT_CLASS_DARK_RANGER:
-        case BOT_CLASS_SEA_WITCH:
-        case BOT_CLASS_CRYPT_LORD:
-            cost += cost * 4; //500%
-            break;
-        default:
-            break;
+    case BOT_CLASS_BM:
+    case BOT_CLASS_ARCHMAGE:
+    case BOT_CLASS_SPELLBREAKER:
+    case BOT_CLASS_NECROMANCER:
+        _npcBotsCost *= 1.5;
+        break;
+    case BOT_CLASS_SPHYNX:
+    case BOT_CLASS_DREADLORD:
+    case BOT_CLASS_DARK_RANGER:
+    case BOT_CLASS_SEA_WITCH:
+    case BOT_CLASS_CRYPT_LORD:
+        _npcBotsCost *= 2.9;
+        break;
+    default:
+        break;
     }
 
-    return cost;
+    return _npcBotsCost * 10000;
 }
 
 //调整NPCBOT 购买价格
 uint32 BotMgr::GetNpcBotItemCount(uint8 level, uint8 botclass)
 {
-    if (level < 10)
-        _npcbothireitemcount = 1;
-    else if (level < 20)
-        _npcbothireitemcount = 5;
-    else if (level < 30)
-        _npcbothireitemcount = 10;
-    else if (level < 40)
-        _npcbothireitemcount = 15;
-    else if (level < 50)
-        _npcbothireitemcount = 20;
-    else if (level < 60)
-        _npcbothireitemcount = 25;
-    else if (level < 70)
-        _npcbothireitemcount = 35;
-    else
-        _npcbothireitemcount = 40;
 
+    static const uint32 count[] = { 1, 5, 10, 15, 20, 25, 30, 35, 40 };
+    _npcbothireitemcount = count[std::min<uint32>(level / 10, 8)];
     switch (botclass)
     {
     case BOT_CLASS_BM:

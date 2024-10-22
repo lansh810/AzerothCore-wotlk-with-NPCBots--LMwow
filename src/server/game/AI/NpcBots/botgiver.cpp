@@ -258,7 +258,7 @@ public:
                 {
                     uint8 botclass = action - GOSSIP_ACTION_INFO_DEF;
                     uint32 itemId = BotMgr::GetNpcBotHireItemId();
-                    uint32 itemCount = BotMgr::GetNpcBotItemCount(player->GetLevel(), botclass);
+                    uint32 itemCount = BotMgr::GetNpcBotHireItemCount();
                     uint32 entry = action - GOSSIP_ACTION_INFO_DEF;
                     Creature const* bot = BotDataMgr::FindBot(entry);
                     if (!bot)
